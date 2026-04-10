@@ -91,7 +91,7 @@
             textarea.value = "Génération du contenu pédagogique en cours... ";
             textarea.classList.add('animate-pulse');
 
-            fetch("{{ route('ai.generate') }}", {
+            fetch("/generate-ai", { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
