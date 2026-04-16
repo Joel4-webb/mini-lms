@@ -59,11 +59,12 @@ class AIController extends Controller
                 return response()->json(['success' => false, 'message' => 'Le contenu du cours est vide']);
             }
 
-            $prompt = "Tu es un expert en pédagogie. Analyse le texte suivant et crée un quiz de 5 questions.
+            $prompt = "Tu es un expert en pédagogie. Analyse le texte suivant et crée un quiz de 5 à 10 questions.
                     RÈGLES :
                     1. Réponds UNIQUEMENT en JSON pur. Pas de texte avant ou après.
                     2. Chaque question doit avoir 4 options.
-                    3. 'correct' doit être un booléen (true/false).
+                    3. Au moins 2 questions sur 5 DOIVENT avoir PLUSIEURS réponses correctes.
+                    4. 'correct' doit être un booléen (true/false).
                     
                     Format attendu :
                     {
