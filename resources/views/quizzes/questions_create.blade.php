@@ -117,13 +117,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialisation du compteur (basé sur l'existant)
             let qCount = parseInt("{{ $quiz->questions->count() }}") || 0;
             const container = document.getElementById('questions-container');
             const placeholder = document.getElementById('placeholder-text');
             const btnManual = document.getElementById('btn-manuel');
 
-            // 1. Fonction Template (Unifiée)
             function generateHTML(index, questionText = '', options = []) {
                 const finalOptions = [0, 1, 2, 3].map(i => options[i] || { texte: '', correct: false });
                 
@@ -149,21 +147,16 @@
                     </div>`;
             }
 
-            // 2. Gestionnaire d'ajout manuel
             if (btnManual) {
                 btnManual.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log("Clic détecté via btnManual !");
-                    
                     if (placeholder) placeholder.style.display = 'none';
-                    
                     const html = generateHTML(qCount);
                     container.insertAdjacentHTML('beforeend', html);
                     qCount++;
                 });
             }
 
-            // 3. Gestionnaire IA (Global)
             window.genererQuestionsIA = async function() {
                 const btnIA = document.getElementById('btn-generate');
                 const content = document.getElementById('contenu_source')?.value;
@@ -175,25 +168,31 @@
                 btnIA.innerText = "✨ Analyse en cours...";
 
                 try {
-                    const response = await fetch("{{ route('ai.generate-quiz') }}", {
+                    // MODIFICATION ICI : On force le HTTPS pour éviter le Mixed Content
+                    const response = await fetch("/generate-quiz-ia", { 
                         method: "POST",
-                        headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                        headers: { 
+                            "Content-Type": "application/json", 
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Accept": "application/json"
+                        },
                         body: JSON.stringify({ contenu: content })
                     });
+                    
                     const data = await response.json();
                     
                     if (data.success && data.questions) {
                         if (placeholder) placeholder.style.display = 'none';
                         data.questions.forEach(q => {
-                            // On utilise le même template pour l'IA et le manuel
                             container.insertAdjacentHTML('beforeend', generateHTML(qCount, q.question, q.options));
                             qCount++;
                         });
                     } else {
-                        alert("L'IA n'a pas pu générer de questions.");
+                        alert("L'IA n'a pas pu générer de questions : " + (data.message || "Erreur inconnue"));
                     }
                 } catch (e) {
-                    alert("Erreur de communication avec l'IA.");
+                    console.error('Erreur IA:', e);
+                    alert("Erreur de communication avec l'IA. Vérifiez la console.");
                 } finally {
                     btnIA.disabled = false;
                     btnIA.innerText = originalText;
