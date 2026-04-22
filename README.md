@@ -3,6 +3,8 @@
 ## 📝 Présentation du projet
 Ce projet est un prototype de plateforme LMS conçu pour gérer des formations, des chapitres, des quiz et le suivi des notes. Il répond à un exercice de développement Laravel sur 4 jours.
 
+**Lien du site en ligne :** [https://mini-lms-production.up.railway.app/](https://mini-lms-production.up.railway.app/)
+
 L'application utilise l'intelligence artificielle pour assister la création de contenus pédagogiques et de quiz.
 
 ---
