@@ -15,6 +15,31 @@ L'application utilise l'intelligence artificielle pour assister la création de 
 
 ---
 
+## 📖 Tutoriel : Créer une leçon et un quiz avec l'IA
+Suivez ces étapes pour générer un module d'apprentissage complet depuis l'interface Administrateur.
+
+### 1. Accès à la gestion
+* Connectez-vous avec le compte **Administrateur**.
+* Rendez-vous dans la liste des **Formations** et sélectionnez celle de votre choix.
+* Cliquez sur un **Chapitre** existant pour voir ses sous-chapitres (leçons).
+
+### 2. Création de la leçon
+* Cliquez sur le bouton **"Ajouter un sous-chapitre"**.
+* Saisissez simplement un **Titre** évocateur (ex: "Les bases de la programmation Python").
+* Laissez le champ de contenu vide pour le moment.
+
+### 3. Génération du contenu pédagogique
+* Cliquez sur le bouton **"Générer via IA"**.
+* L'application interroge l'API Groq (Llama 3.3) pour rédiger automatiquement un cours structuré.
+* Une fois le texte apparu, cliquez sur **Enregistrer**.
+
+### 4. Génération du Quiz
+* Une fois la leçon enregistrée, un bouton **"Générer un Quiz"** devient disponible.
+* Cliquez dessus : l'IA analyse le texte de votre leçon pour créer automatiquement des questions (QCM).
+* Votre module est maintenant prêt !
+
+---
+
 ## 🛠️ Stack Technique
 * **Framework** : Laravel 11
 * **Base de données** : SQLite ou MySQL
