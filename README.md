@@ -1,7 +1,7 @@
 #  Mini LMS Pédagogique - Prototype Laravel
 
 ##  Présentation du projet
-Ce projet est un prototype de plateforme LMS conçu pour gérer des formations, des chapitres, des quiz et le suivi des notes. Il répond à un exercice de développement Laravel sur 4 jours.
+Ce projet est un prototype de plateforme LMS conçu pour gérer des formations, des chapitres, des quiz et le suivi des notes.
 
 **Lien du site en ligne :** [https://mini-lms-production.up.railway.app/](https://mini-lms-production.up.railway.app/)
 
