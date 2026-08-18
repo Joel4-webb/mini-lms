@@ -1,6 +1,6 @@
-# 🎓 Mini LMS Pédagogique - Prototype Laravel
+#  Mini LMS Pédagogique - Prototype Laravel
 
-## 📝 Présentation du projet
+##  Présentation du projet
 Ce projet est un prototype de plateforme LMS conçu pour gérer des formations, des chapitres, des quiz et le suivi des notes. Il répond à un exercice de développement Laravel sur 4 jours.
 
 **Lien du site en ligne :** [https://mini-lms-production.up.railway.app/](https://mini-lms-production.up.railway.app/)
@@ -9,7 +9,7 @@ L'application utilise l'intelligence artificielle pour assister la création de 
 
 ---
 
-## 🚀 Fonctionnalités
+##  Fonctionnalités
 * **Gestion complète** : Formations, chapitres et sous-chapitres.
 * **Quiz dynamiques** : Questions à choix multiples avec calcul automatique du score.
 * **IA Intégrée** : Génération assistée de leçons et de questions de quiz.
@@ -17,7 +17,7 @@ L'application utilise l'intelligence artificielle pour assister la création de 
 
 ---
 
-## 📖 Tutoriel : Créer une leçon et un quiz avec l'IA
+##  Tutoriel : Créer une leçon et un quiz avec l'IA
 Suivez ces étapes pour générer un module d'apprentissage complet depuis l'interface Administrateur.
 
 ### 1. Accès à la gestion
@@ -42,7 +42,7 @@ Suivez ces étapes pour générer un module d'apprentissage complet depuis l'int
 
 ---
 
-## 🛠️ Stack Technique
+##  Stack Technique
 * **Framework** : Laravel 11
 * **Base de données** : SQLite ou MySQL
 * **IA API** : Intégration via Groq (Llama 3.3)
@@ -51,7 +51,7 @@ Suivez ces étapes pour générer un module d'apprentissage complet depuis l'int
 
 ---
 
-## ⚙️ Installation et Lancement
+##  Installation et Lancement
 
 ### 1. Installation des dépendances
 ```bash
@@ -81,7 +81,7 @@ php artisan serve
 
 ---
 
-## 🔑 Identifiants de Test
+##  Identifiants de Test
 
 | Rôle | Email | Mot de passe |
 | :--- | :--- | :--- |
@@ -90,5 +90,5 @@ php artisan serve
 
 ---
 
-## 📈 Exemple de contenu inclus
+##  Exemple de contenu inclus
 Un module complet sur les **"Verbes irréguliers en anglais"** est inclus (chapitres, sous-chapitres et quiz) pour illustrer l'importation de contenu assistée par IA.
