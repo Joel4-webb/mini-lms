@@ -31,12 +31,12 @@ class QuizController extends Controller
             'sous_chapitre_id' => 'required|exists:sous_chapitres,id',
         ]);
 
-        $lecon = SousChapitre::findOrFail($request->sous_chapitre_id);
+        $sousChapitre = \App\Models\SousChapitre::findOrFail($validated['sous_chapitre_id']);
 
         $quiz = Quiz::create([
             'titre' => $validated['titre'],
             'sous_chapitre_id' => $validated['sous_chapitre_id'],
-            'chapitre_id' => $lecon->chapitre_id,
+            'chapitre_id' => $sousChapitre->chapitre_id,
         ]);
 
         return redirect()->route('quizzes.questions.create', $quiz->id)
@@ -45,7 +45,15 @@ class QuizController extends Controller
 
     public function show(Quiz $quiz)
     {
-        $quiz->load('questions.reponses');
+        $user = auth()->user();
+        
+        $quiz->load('sousChapitre.chapitre.formation', 'questions.reponses');
+        $formation_id = $quiz->sousChapitre->chapitre->formation_id;
+
+        if ($user->role === 'apprenant' && !$user->formations->contains($formation_id)) {
+            abort(403, "Accès refusé : Vous n'êtes pas inscrit à la formation de ce quiz.");
+        }
+
         return view('quizzes.show', compact('quiz'));
     }
 
@@ -116,6 +124,7 @@ class QuizController extends Controller
         $total = $quiz->questions->count();
         $detailResultats = [];
 
+        // 1. Calcul du score (Logique existante)
         foreach ($quiz->questions as $question) {
             $choisis = $reponsesEleve[$question->id] ?? [];
             $choisisIds = is_array($choisis) ? array_map('intval', $choisis) : [intval($choisis)];
@@ -135,36 +144,72 @@ class QuizController extends Controller
             $detailResultats[] = [
                 'question' => $question->texte_question,
                 'correct' => $estCorrect,
-                'votre_reponse' => Reponse::whereIn('id', $choisisIds)->pluck('texte_reponse')->toArray(),
-                'la_bonne_reponse' => Reponse::whereIn('id', $bonsIds)->pluck('texte_reponse')->toArray()
+                'votre_reponse' => \App\Models\Reponse::whereIn('id', $choisisIds)->pluck('texte_reponse')->toArray(),
+                'la_bonne_reponse' => \App\Models\Reponse::whereIn('id', $bonsIds)->pluck('texte_reponse')->toArray()
             ];
         }
 
-        // Calcul automatique de la note sur 20
+        // 2. Calcul automatique de la note sur 20
         $noteSur20 = ($total > 0) ? ($score / $total) * 20 : 0;
+        
+        // 3. MOTEUR DE GAMIFICATION
+        $user = auth()->user();
+        $seuilReussite = 16; // 80% (16/20) pour valider le chapitre
+        $isPassed = $noteSur20 >= $seuilReussite;
+        $pointsGagnes = 0;
 
+        // Anti-triche : On vérifie si l'utilisateur a déjà réussi ce quiz auparavant
+        $alreadyPassed = $user->completedQuizzes()
+                              ->where('quiz_id', $quiz->id)
+                              ->where('is_passed', true)
+                              ->exists();
+
+        // S'il réussit pour la première fois, on lui donne 50 points
+        if ($isPassed && !$alreadyPassed) {
+            $pointsGagnes = 50;
+            $user->increment('points_balance', $pointsGagnes);
+        }
+
+        // 4. Enregistrements en Base de données
+        // Historique Gamification
+        $user->completedQuizzes()->attach($quiz->id, [
+            'score' => $noteSur20,
+            'is_passed' => $isPassed
+        ]);
+
+        // Historique des notes global (existant)
         Note::create([
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'quiz_id' => $quiz->id,
-            'note'    => $noteSur20, 
+            'note'    => $noteSur20,
+            'details' => $detailResultats 
         ]);
 
         return redirect()->route('quizzes.results', $quiz->id)->with([
             'score' => $score,
             'total' => $total,
             'noteSur20' => $noteSur20,
-            'details' => $detailResultats
+            'details' => $detailResultats,
+            'pointsGagnes' => $pointsGagnes,
+            'isPassed' => $isPassed
         ]);
     }
 
-    public function results(Quiz $quiz)
+    public function results(Request $request, Quiz $quiz)
     {
+        $user = auth()->user();
+        $targetUserId = $user->id;
+
+        if ($user->role === 'admin' && $request->has('user_id')) {
+            $targetUserId = $request->query('user_id');
+        }
+        
         $note = Note::where('quiz_id', $quiz->id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', $targetUserId)
             ->latest()
             ->first();
 
-        $details = session('details'); 
+        $details = $note ? $note->details : [];
 
         return view('quizzes.results', compact('quiz', 'note', 'details'));
     }

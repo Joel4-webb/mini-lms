@@ -11,11 +11,24 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                // Nouvelles couleurs (Soft UI)
+                'lms-primary': '#4F46E5', 
+                'lms-primary-light': '#EEF2FF', 
+                'lms-bg': '#F8FAFC', 
+                
+                // Anciennes couleurs (conservées temporairement pour éviter les erreurs de compilation)
+                'lms-beige': '#F5F2EC',
+                'lms-red': '#D32F2F',
+                'lms-bleu-nuit': '#0A0B6B',
+                'lms-dark': '#1C1B1A',
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', 'Figtree', ...defaultTheme.fontFamily.sans],
+                pixel: ['"Press Start 2P"', 'monospace'],
             },
         },
     },
 
-    plugins: [forms],
+    plugins: [require('@tailwindcss/forms')],
 };

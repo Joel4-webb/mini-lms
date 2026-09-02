@@ -24,7 +24,14 @@ class SousChapitreController extends Controller
     public function create(Request $request)
     {
         $chapitre_id = $request->query('chapitre_id');
-        return view('sous_chapitres.create', compact('chapitre_id'));
+        $chapitre = Chapitre::with('formation')->findOrFail($chapitre_id);
+        
+        // Autorise l'admin OU le créateur de la formation
+        if (!auth()->user()->isAdmin() && $chapitre->formation->creator_id !== auth()->id()) {
+            abort(403, "Non autorisé.");
+        }
+        
+        return view('sous_chapitres.create', compact('chapitre'));
     }
     
 
@@ -33,17 +40,21 @@ class SousChapitreController extends Controller
      */
     public function store(Request $request)
     {
-        
         $validated = $request->validate([
-        'titre' => 'required|string|max:255',
-        'contenu' => 'required',
-        'chapitre_id' => 'required|exists:chapitres,id'
-    ]);
+            'titre' => 'required|string|max:255',
+            'contenu' => 'required',
+            'chapitre_id' => 'required|exists:chapitres,id'
+        ]);
 
-    $lecon = SousChapitre::create($validated);
+        $chapitre = Chapitre::with('formation')->findOrFail($validated['chapitre_id']);
+        if (!auth()->user()->isAdmin() && $chapitre->formation->creator_id !== auth()->id()) {
+            abort(403, "Non autorisé.");
+        }
 
-    return redirect()->route('quizzes.create', ['sous_chapitre_id' => $lecon->id])
-                     ->with('success', 'Leçon créée ! Créez maintenant le quiz associé.');
+        $lecon = SousChapitre::create($validated);
+
+        return redirect()->route('quizzes.create', ['sous_chapitre_id' => $lecon->id])
+                         ->with('success', 'Leçon créée ! Créez maintenant le quiz associé.');
     }
 
     /**
@@ -60,6 +71,11 @@ class SousChapitreController extends Controller
      */
     public function edit(SousChapitre $sousChapitre)
     {
+        $formation = $sousChapitre->chapitre->formation;
+        if (!auth()->user()->isAdmin() && $formation->creator_id !== auth()->id()) {
+            abort(403, "Non autorisé.");
+        }
+
         return view('sous_chapitres.edit', compact('sousChapitre'));
     }
 
@@ -68,7 +84,12 @@ class SousChapitreController extends Controller
      */
     public function update(Request $request, SousChapitre $sousChapitre)
     {
-            $request->validate([
+        $formation = $sousChapitre->chapitre->formation;
+        if (!auth()->user()->isAdmin() && $formation->creator_id !== auth()->id()) {
+            abort(403, "Non autorisé.");
+        }
+
+        $request->validate([
             'titre' => 'required|string|max:255',
             'contenu' => 'required'
         ]);
@@ -82,6 +103,11 @@ class SousChapitreController extends Controller
      */
     public function destroy(SousChapitre $sousChapitre)
     {
+        $formation = $sousChapitre->chapitre->formation;
+        if (!auth()->user()->isAdmin() && $formation->creator_id !== auth()->id()) {
+            abort(403, "Non autorisé.");
+        }
+
         $chapitreId = $sousChapitre->chapitre_id;
         $sousChapitre->delete();
         return redirect()->route('chapitres.show', $chapitreId)->with('success', 'Leçon supprimée.');

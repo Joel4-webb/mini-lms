@@ -1,129 +1,128 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
+<nav x-data="{ open: false, scrolled: false }" 
+     @scroll.window="scrolled = (window.pageYOffset > 20)"
+     :class="scrolled ? 'bg-indigo-50/95 border-indigo-200 shadow-sm' : 'bg-white/80 border-slate-200'"
+     class="backdrop-blur-md border-b sticky top-0 z-50 transition-all duration-300">
+     
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+        <div class="flex items-center justify-between h-20">
+            
+            {{-- 1. LOGO (Gauche) --}}
+            <div class="flex items-center">
+                <a href="{{ route('dashboard') }}" class="flex items-center shrink-0">
+                    <span class="font-black text-2xl text-slate-900 tracking-tighter transition-colors">
+                        MINI<span class="text-indigo-600">LMS</span>
+                    </span>
+                </a>
+            </div>
+
+            {{-- 2. LIENS CENTRAUX (Milieu) --}}
+            <div class="hidden md:flex items-center gap-2 text-sm font-bold">
+                
+                @if(Auth::user()->role === 'admin')
+                    <!-- Navigation Administrateur -->
+                    <a href="{{ route('dashboard') }}" 
+                       class="px-4 py-2 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-100/50' }}">
+                        Tableau de bord
                     </a>
+
+                    <a href="{{ route('formations.index') }}" 
+                       class="px-4 py-2 rounded-lg transition-colors {{ request()->routeIs('formations.*') ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-100/50' }}">
+                        Gestion Formations
+                    </a>
+
+                    <a href="{{ route('notes.index') }}" 
+                       class="px-4 py-2 rounded-lg transition-colors {{ request()->routeIs('notes.*') ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-100/50' }}">
+                        Suivi Évaluations
+                    </a>
+                @else
+                    <!-- Navigation Apprenant -->
+                    <a href="{{ route('dashboard') }}" 
+                       class="px-4 py-2 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-100/50' }}">
+                        Mes leçons
+                    </a>
+
+                    <a href="{{ route('formations.index') }}" 
+                       class="px-4 py-2 rounded-lg transition-colors {{ request()->routeIs('formations.*') ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-100/50' }}">
+                        Catalogue
+                    </a>
+
+                    <a href="{{ route('notes.index') }}" 
+                       class="px-4 py-2 rounded-lg transition-colors {{ request()->routeIs('notes.*') ? 'bg-indigo-100 text-indigo-700' : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-100/50' }}">
+                        Résultats
+                    </a>
+                @endif
+            </div>
+
+            {{-- 3. GAMIFICATION & PROFIL (Droite) --}}
+            <div class="flex items-center gap-4 sm:gap-6">
+                
+               <!-- Solde de points IA -->
+                <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-100 text-amber-600 rounded-xl text-sm font-black shadow-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"/></svg>
+                    {{ Auth::user()->role === 'admin' ? 'Infini' : (Auth::user()->points_balance ?? 0) . ' Pts' }}
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Tableau de bord') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('formations.index')" :active="request()->routeIs('formations.*')">
-                        {{ __('Formations') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.*')">
-                        {{ __('Mes Notes') }}
-                    </x-nav-link>
-                </div>
-
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <!-- Dropdown Profil -->
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
+                        <button class="flex items-center focus:outline-none">
+                            <div class="w-10 h-10 rounded-xl border-2 border-slate-100 hover:border-indigo-300 overflow-hidden transition-all shadow-sm">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=EEF2FF&color=4F46E5&bold=true" alt="Avatar" class="w-full h-full object-cover">
                             </div>
                         </button>
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        <div class="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                            <p class="text-sm font-bold text-slate-900">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-slate-500 font-medium truncate">{{ Auth::user()->email }}</p>
+                        </div>
+                        
+                        <x-dropdown-link :href="route('profile.edit')" class="text-sm font-semibold text-slate-700 hover:text-indigo-600">
+                            Mon Profil
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                    onclick="event.preventDefault(); this.closest('form').submit();" class="text-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50">
+                                Déconnexion
                             </x-dropdown-link>
                         </form>
                     </x-slot>
                 </x-dropdown>
-            </div>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <!-- Bouton Menu Mobile -->
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none transition-colors">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <!-- Menu Mobile Dropdown -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden bg-white border-t border-slate-100 shadow-xl absolute w-full transition-all">
+        <div class="px-4 py-3 border-b border-slate-50 bg-amber-50 flex items-center gap-2">
+            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"/></svg>
+            <span class="text-sm font-black text-amber-700">
+                {{ Auth::user()->role === 'admin' ? 'Solde Infini' : (Auth::user()->points_balance ?? 0) . ' Pts disponibles' }}
+            </span>
+        </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-
-            <x-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.index')">
-                {{ auth()->user()->role === 'admin' ? 'Notes Globales' : 'Mes Notes' }}
-            </x-nav-link>
+            @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Tableau de bord</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('formations.index')" :active="request()->routeIs('formations.*')">Gestion Formations</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.*')">Suivi Évaluations</x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Mes leçons</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('formations.index')" :active="request()->routeIs('formations.*')">Catalogue</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.*')">Résultats</x-responsive-nav-link>
+            @endif
         </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
-
-
-        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-nav-link>
-
-            {{-- Lien vers les Formations (Visible par tous) --}}
-            <x-nav-link :href="route('formations.index')" :active="request()->routeIs('formations.*')">
-                {{ __('Formations') }}
-            </x-nav-link>
-
-            {{-- Lien vers les Notes (Visible par tous) --}}
-            <x-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.*')">
-                {{ __('Mes Notes') }}
-            </x-nav-link>
-        </div>
-
     </div>
 </nav>

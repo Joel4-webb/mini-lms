@@ -17,7 +17,7 @@ class NoteSeeder extends Seeder
             Note::create([
                 'user_id' => $apprenant->id,
                 'quiz_id' => $quiz->id,
-                'note' => 16.0, // Note sur 20 [cite: 64]
+                'note' => 16.0, 
             ]);
         }
     }

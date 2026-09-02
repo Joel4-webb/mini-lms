@@ -13,16 +13,22 @@ class NoteController extends Controller
    public function index()
     {
         $user = auth()->user();
-        $notes = \App\Models\Note::where('user_id', $user->id)
-                    ->with('quiz.sousChapitre.chapitre.formation')
-                    ->latest()
-                    ->get();
 
-        $stats = [
-            'moyenne_generale' => $notes->avg('note') ?? 0,
-            'quiz_reussis' => $notes->where('note', '>=', 10)->count(),
-            'total_quiz' => $notes->count(),
-        ];
+        if ($user->role === 'admin') {
+            $notes = \App\Models\Note::with(['user', 'quiz'])->latest()->get();
+            $stats = []; 
+        } else {
+            $notes = \App\Models\Note::where('user_id', $user->id)
+                        ->with('quiz.sousChapitre.chapitre.formation')
+                        ->latest()
+                        ->get();
+
+            $stats = [
+                'moyenne_generale' => $notes->avg('note') ?? 0,
+                'quiz_reussis' => $notes->where('note', '>=', 10)->count(),
+                'total_quiz' => $notes->count(),
+            ];
+        }
 
         return view('notes.index', compact('notes', 'stats'));
     }

@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
-    protected $fillable = ['user_id', 'quiz_id', 'note']; 
+    protected $fillable = ['user_id', 'quiz_id', 'note', 'details'];
+
+    protected $casts = [
+        'details' => 'array',
+    ];
 
     public function user() {
         return $this->belongsTo(User::class);

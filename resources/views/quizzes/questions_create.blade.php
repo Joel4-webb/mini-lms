@@ -27,7 +27,7 @@
             {{-- SECTION 1 : QUESTIONS EXISTANTES --}}
             <div class="mb-12">
                 <h3 class="text-xl font-black text-gray-800 flex items-center mb-6">
-                    📚 Questions enregistrées 
+                    Questions enregistrées 
                     <span class="ml-3 px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-600">
                         {{ $quiz->questions->count() }}
                     </span>
@@ -76,7 +76,7 @@
                 <input type="hidden" id="contenu_source" value="{{ $quiz->sousChapitre->contenu ?? '' }}">
                 <button type="button" id="btn-generate" onclick="window.genererQuestionsIA()" 
                         class="w-full bg-white text-indigo-600 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-indigo-50 transition-all active:scale-95">
-                    ✨ Générer des questions intelligentes
+                    Générer des questions intelligentes
                 </button>
             </div>
 
@@ -107,7 +107,7 @@
                         </button>
                         
                         <button type="submit" class="w-full sm:w-auto bg-green-500 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-2xl hover:bg-green-600 transition-all">
-                            💾 Enregistrer le contenu
+                            Enregistrer le contenu
                         </button>
                     </div>
                 </form>
@@ -157,6 +157,14 @@
                 });
             }
 
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                if (qCount < 5 || qCount > 10) {
+                    e.preventDefault(); // On bloque l'envoi
+                    alert(`Attention : Le quiz doit contenir entre 5 et 10 questions (Vous en avez ${qCount}).`);
+                }
+            });
+
             window.genererQuestionsIA = async function() {
                 const btnIA = document.getElementById('btn-generate');
                 const content = document.getElementById('contenu_source')?.value;
@@ -165,10 +173,9 @@
 
                 btnIA.disabled = true;
                 const originalText = btnIA.innerText;
-                btnIA.innerText = "✨ Analyse en cours...";
+                btnIA.innerText = " Analyse en cours...";
 
                 try {
-                    // MODIFICATION ICI : On force le HTTPS pour éviter le Mixed Content
                     const response = await fetch("/generate-quiz-ia", { 
                         method: "POST",
                         headers: { 

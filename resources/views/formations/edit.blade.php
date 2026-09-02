@@ -52,7 +52,7 @@
 
                     <div class="flex justify-end pt-4">
                         <button type="submit" class="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-1 transition-all">
-                            💾 Mettre à jour les informations
+                            Mettre à jour les informations
                         </button>
                     </div>
                 </form>
@@ -88,7 +88,7 @@
 
                     <div class="mt-8 pt-8 border-t border-gray-50">
                         <button type="submit" class="w-full md:w-auto bg-gray-900 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-indigo-600 transition-all">
-                            ✅ Valider les inscriptions
+                            Valider les inscriptions
                         </button>
                     </div>
                 </form>

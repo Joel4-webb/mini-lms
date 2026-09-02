@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-lms-beige text-lms-dark font-sans;
+    }
+}
+
+@layer utilities {
+    .font-pixel {
+        font-family: "Press Start 2P", ui-monospace, monospace;
+        text-transform: uppercase;
+    }
+
+    .btn-primaire {
+        @apply bg-lms-red text-white px-6 py-3 font-bold transition-colors duration-300 rounded;
+    }
+
+    .btn-primaire:hover {
+        @apply bg-lms-bleu-nuit;
+    }
+}
