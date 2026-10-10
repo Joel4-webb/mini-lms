@@ -38,7 +38,7 @@
                                 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-6 [&>ul>li]:mb-2 [&>ul>li]:text-lg
                                 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-6 [&>ol>li]:mb-2 [&>ol>li]:text-lg
                                 [&>strong]:font-bold [&>strong]:text-slate-900">
-                        {!! Str::markdown($sousChapitre->contenu) !!}
+                        {!! Str::markdown(str_replace('\n', "\n", $sousChapitre->contenu)) !!}
                     </div>
                 </div>
             </div>
