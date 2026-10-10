@@ -27,3 +27,12 @@ RUN npm install && npm run build
 # 8. Création du fichier SQLite et gestion des permissions pour Apache
 RUN touch /var/www/html/database/database.sqlite
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+
+# Création du script de démarrage automatique
+RUN echo '#!/bin/bash' > /start.sh
+RUN echo 'php artisan migrate:fresh --seed --force' >> /start.sh
+RUN echo 'apache2-foreground' >> /start.sh
+RUN chmod +x /start.sh
+
+# Remplacement de la commande par défaut
+CMD ["/start.sh"]
