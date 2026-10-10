@@ -1,8 +1,10 @@
 # Mini LMS Pédagogique - Prototype Laravel
 
-##  Présentation du projet
+## Présentation du projet
 
 Ce projet est un prototype de plateforme **LMS (Learning Management System)** conçu pour gérer des formations, des chapitres, des sous-chapitres, des quiz et le suivi de progression des apprenants.
+
+**Lien du site en ligne :** [https://mini-lms-ndsz.onrender.com/](https://mini-lms-ndsz.onrender.com/)
 
 L'application intègre nativement **l'intelligence artificielle**, via l'API **Groq**, afin d'automatiser la création de contenus pédagogiques et de quiz.
 
